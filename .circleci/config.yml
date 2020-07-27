@@ -8,7 +8,6 @@ workflows:
     jobs:
       - docker/publish:
           image: aaronzinhoo/$CIRCLE_PROJECT_REPONAME
-          tag: $CIRCLE_SHA1
           tag: latest
           dockerfile: Dockerfile
           deploy: true
