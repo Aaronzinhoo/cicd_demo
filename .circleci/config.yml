@@ -1,17 +1,103 @@
-version: 2.1
+# apply to any job (basically reusable object)
+defaults: &defaults
+  machine:
+    # save image layers so do not have to rebuild later
+    docker_layer_caching: true
 
 orbs:
   docker: circleci/docker@1.3.0
 
+version: 2.1
+commands:
+  setupenv:
+    description: "Quick Environment setup"
+    steps:
+      - checkout
+      - run:
+          name: Setup Environment Variables
+          command: |
+            echo 'export TAG=${CIRCLE_SHA1}' >> $BASH_ENV
+            echo 'export IMAGE_NAME=cicd_demo' >> $BASH_ENV
+
+  cache-app:
+    description: "Cache the Production Docker Image"
+    parameters:
+      cache:
+        type: boolean
+        default: false
+    steps:
+      - when:
+          condition: <<parameters.cache>>
+          steps:
+            - run:
+                name: Save Docker Image
+                command: |
+                  mkdir -p docker-cache
+                  docker save -o docker-cache/built-image.tar
+            - save_cache:
+                key: docker_cache_key-{{ .Environment.CIRCLE_SHA1 }}
+                paths:
+                  - docker-cache
+
+# Jobs Definitions
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - setupenv
+      - run:
+          name: Build production docker image
+          command: |
+            npm run build:prod
+  build-and-cache:
+    <<: *defaults
+    steps:
+      - setupenv
+      - run:
+          name: Build Production Docker Image
+          command: |
+             npm run build:prod
+      - cache-app:
+          cache: true
+  publish:
+    <<: *defaults
+    steps:
+      - setupenv
+      - restore_cache:
+          key: docker_cache_key-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Load Image from Docker Cache
+          command: |
+            docker load < docker-cache/build-image.tar
+      - run:
+          name: Publish Docker Image
+          command: |
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push aaronzinhoo/$IMAGE_NAME:$TAG
+
 workflows:
   build-deploy:
     jobs:
-      - docker/publish:
-          image: aaronzinhoo/$CIRCLE_PROJECT_REPONAME
-          tag: latest
-          dockerfile: Dockerfile
-          deploy: true
+      - build-and-cache:
           filters:
             branches:
               only:
+                - develop
                 - master
+      -  publish:
+          requires:
+            - build-and-cache
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      # - docker/publish:
+      #     image: aaronzinhoo/$CIRCLE_PROJECT_REPONAME
+      #     tag: latest
+      #     dockerfile: Dockerfile
+      #     deploy: true
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
