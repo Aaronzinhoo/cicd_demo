@@ -15,7 +15,7 @@ commands:
           name: Setup Environment Variables
           command: |
             echo 'export TAG=${CIRCLE_SHA1}' >> $BASH_ENV
-            echo 'export IMAGE_NAME=cicd_demo' >> $BASH_ENV
+            echo 'export IMAGE_NAME=circleci_docker_nginx_test >> $BASH_ENV
 
   cache-app:
     description: "Cache the Production Docker Image"
