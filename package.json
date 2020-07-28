@@ -1,5 +1,5 @@
 {
-  "name": "circleci_docker_nginx_test",
+  "name": "cicd_demo",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
