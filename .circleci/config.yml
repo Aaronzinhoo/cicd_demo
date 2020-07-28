@@ -89,8 +89,7 @@ jobs:
       - run:
           name: Publish Docker Image
           command: |
-            docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
-            echo $TAG
+            echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_LOGIN --password-stdin
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
   publish-dev:
     <<: *base
@@ -105,7 +104,7 @@ jobs:
       - run:
           name: Publish Docker Image
           command: |
-            docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+            echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_LOGIN --password-stdin
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
 workflows:
   build-deploy-dev:
