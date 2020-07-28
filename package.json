@@ -14,7 +14,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "build:dev": "docker build -t aaronzinhoo/${npm_package_name}_dev:latest -f Dockerfile.dev .",
+    "build:dev": "docker build -t aaronzinhoo/${npm_package_name}_dev:${TAG:=latest} -f Dockerfile.dev .",
     "start:dev": "docker rm ${npm_package_name}_dev_container || true && docker run -itd --rm -p 3001:80 --mount type=bind,source=`pwd`,destination=/app --volume /app/node_modules --name ${npm_package_name}_dev_container aaronzinhoo/${npm_package_name}_dev:latest npm run start",
     "build:prod": "docker build -t aaronzinhoo/${npm_package_name}:${TAG:=latest} -f Dockerfile .",
     "eject": "react-scripts eject"
