@@ -90,6 +90,7 @@ jobs:
           name: Publish Docker Image
           command: |
             docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+            echo $TAG
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
   publish-dev:
     <<: *base
