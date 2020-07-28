@@ -14,9 +14,18 @@ commands:
       - run:
           name: Setup Environment Variables
           command: |
-            echo 'export TAG=${CIRCLE_SHA1}' >> $BASH_ENV
+            echo 'export TAG=latest' >> $BASH_ENV
             echo 'export IMAGE_NAME=cicd_demo' >> $BASH_ENV
 
+  setupenvdev:
+    description: "Quick Setup For Development Setup"
+    steps:
+      - checkout
+      - run:
+          name: Setup Development Environment Variables
+          command: |
+            echo 'export TAG=${CIRCLE_SHA1} >> $BASH_ENV
+            echo 'export IMAGE_NAME=cicd_demo_dev' >> $BASH_ENV
   cache-app:
     description: "Cache the Production Docker Image"
     parameters:
@@ -57,6 +66,16 @@ jobs:
              npm run build:prod
       - cache-app:
           cache: true
+  build-and-cache-dev:
+    <<: *base
+    steps:
+      - setupenvdev
+      - run:
+          name: Build Production Docker Image
+          command: |
+             npm run build:dev
+      - cache-app:
+          cache: true
   publish:
     <<: *base
     steps:
@@ -72,15 +91,42 @@ jobs:
           command: |
             docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
-
+  publish-dev:
+    <<: *base
+    steps:
+      - setupenvdev
+      - restore_cache:
+          key: docker_cache_key-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Load Image from Docker Cache
+          command: |
+            docker load < docker-cache/built-image.tar
+      - run:
+          name: Publish Docker Image
+          command: |
+            docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
+            docker push aaronzinhoo/$IMAGE_NAME:$TAG
 workflows:
+  build-deploy-dev:
+    jobs:
+      - build-and-cache-dev:
+          filters:
+            branches:
+              only:
+                - develop
+      - publish-dev:
+          requires:
+            - build-and-cache-dev
+          filters:
+            branches:
+              only:
+                - develop
   build-deploy:
     jobs:
       - build-and-cache:
           filters:
             branches:
               only:
-                - develop
                 - master
       -  publish:
           requires:
@@ -88,7 +134,6 @@ workflows:
           filters:
             branches:
               only:
-                - develop
                 - master
       # - docker/publish:
       #     image: aaronzinhoo/$CIRCLE_PROJECT_REPONAME
