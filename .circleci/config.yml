@@ -70,7 +70,7 @@ jobs:
       - run:
           name: Publish Docker Image
           command: |
-            echo docker login -u $DOCKER_LOGIN $DOCKER_PWD
+            docker login -u $DOCKER_LOGIN -p $DOCKER_PWD
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
 
 workflows:
