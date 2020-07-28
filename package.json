@@ -16,7 +16,10 @@
     "test": "react-scripts test",
     "build:dev": "docker build -t aaronzinhoo/${npm_package_name}_dev:${TAG:=latest} -f Dockerfile.dev .",
     "start:dev": "docker rm ${npm_package_name}_dev_container || true && docker run -itd --rm -p 3000:3000 --mount type=bind,source=`pwd`,destination=/app --volume /app/node_modules --name ${npm_package_name}_dev_container aaronzinhoo/${npm_package_name}_dev:${TAG:=latest} npm run start",
+    "stop:dev": "docker stop ${npm_package_name}_dev_container",
     "build:prod": "docker build -t aaronzinhoo/${npm_package_name}:${TAG:=latest} -f Dockerfile .",
+    "start:prod": "docker rm ${npm_package_name}_container || true && docker run -itd --rm -p 8080:80 --name ${npm_package_name}_container aaronzinhoo/${npm_package_name}:${TAG:=latest}",
+    "stop:prod": "docker stop ${npm_package_name}_container",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
