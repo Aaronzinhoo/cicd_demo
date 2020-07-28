@@ -31,7 +31,7 @@ commands:
                 name: Save Docker Image
                 command: |
                   mkdir -p docker-cache
-                  docker save -o docker-cache/built-image.tar
+                  docker save -o docker-cache/built-image.tar aaronzinhoo/$IMAGE_NAME:$TAG
             - save_cache:
                 key: docker_cache_key-{{ .Environment.CIRCLE_SHA1 }}
                 paths:
