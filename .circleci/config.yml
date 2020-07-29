@@ -111,6 +111,7 @@ jobs:
     executor: aws-cli/default
     steps:
       - setupenv
+      - add_ssh_keys
       - aws-cli/install
       - aws-cli/setup:
           profile-name: aaron
