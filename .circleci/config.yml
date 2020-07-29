@@ -106,6 +106,13 @@ jobs:
           command: |
             echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_LOGIN --password-stdin
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
+  deploy:
+    <<: *base
+    steps:
+      - setupenv
+      - run:
+          chmod +x ../deploy.sh
+          ../deploy.sh
 workflows:
   build-deploy-dev:
     jobs:
@@ -131,6 +138,13 @@ workflows:
       -  publish:
           requires:
             - build-and-cache
+          filters:
+            branches:
+              only:
+                - master
+      - deploy:
+          requires:
+            - publish
           filters:
             branches:
               only:
