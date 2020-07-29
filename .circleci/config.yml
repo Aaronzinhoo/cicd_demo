@@ -113,9 +113,8 @@ jobs:
       - run:
           name: Deploy Updated Image to Server
           command: |
-            ls .
-            chmod +x $CIRCLE_PROJECT_REPONAME/deploy.sh
-            ./$CIRCLE_PROJECT_REPONAME/deploy.sh
+            chmod +x deploy.sh
+            ./deploy.sh
 workflows:
   build-deploy-dev:
     jobs:
