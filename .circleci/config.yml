@@ -4,6 +4,7 @@ base: &base
 
 version: 2.1
 orbs:
+  aws-cli: circleci/aws-cli@1.2.1
   docker: circleci/docker@1.3.0
 
 commands:
@@ -107,14 +108,23 @@ jobs:
             echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_LOGIN --password-stdin
             docker push aaronzinhoo/$IMAGE_NAME:$TAG
   deploy:
-    <<: *base
+    executor: aws-cli/default
     steps:
       - setupenv
+      - aws-cli/install
+      - aws-cli/setup:
+          profile-name: aaron
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
+          aws-region: $AWS_REGION
       - run:
           name: Deploy Updated Image to Server
           command: |
-            chmod +x deploy.sh
-            ./deploy.sh
+            cd ..
+            ls .
+            chmod +x $CIRCLE_PROJECT_REPONAME/deploy.sh
+            ./$CIRCLE_PROJECT_REPONAME/deploy.sh
+
 workflows:
   build-deploy-dev:
     jobs:

@@ -1,7 +1,5 @@
-# install AWS CLI
-curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-unzip awscli-bundle.zip
-./awscli-bundle/install -b ~/bin/aws
+#!/bin/bash
+echo "LOADING CONFIGURATION"
 
 # get public IP of CircleCI runner
 RUNNER_IP=$(curl ipinfo.io/ip)
@@ -21,6 +19,8 @@ sleep 7
 
 # steps to deploy
 # docker should already be installed, just need to copy repo code
+
+echo "DEPLOYING REPO"
 
 scp -r $CIRCLE_PROJECT_REPONAME $EC2_USERNAME@$EC2_PUBLIC_IP:~/
 ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_IP \
