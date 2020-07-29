@@ -111,9 +111,11 @@ jobs:
     steps:
       - setupenv
       - run:
-          ls .
-          chmod +x $CIRCLE_PROJECT_REPONAME/deploy.sh
-          ./$CIRCLE_PROJECT_REPONAME/deploy.sh
+          name: Deploy Updated Image to Server
+          command: |
+            ls .
+            chmod +x $CIRCLE_PROJECT_REPONAME/deploy.sh
+            ./$CIRCLE_PROJECT_REPONAME/deploy.sh
 workflows:
   build-deploy-dev:
     jobs:
