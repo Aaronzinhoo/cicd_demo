@@ -114,9 +114,9 @@ jobs:
       - aws-cli/install
       - aws-cli/setup:
           profile-name: aaron
-          aws-access-key-id: $AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
-          aws-region: $AWS_REGION
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
       - run:
           name: Deploy Updated Image to Server
           command: |
