@@ -111,8 +111,9 @@ jobs:
     steps:
       - setupenv
       - run:
-          chmod +x ../deploy.sh
-          ../deploy.sh
+          ls .
+          chmod +x $CIRCLE_PROJECT_REPONAME/deploy.sh
+          ./$CIRCLE_PROJECT_REPONAME/deploy.sh
 workflows:
   build-deploy-dev:
     jobs:
