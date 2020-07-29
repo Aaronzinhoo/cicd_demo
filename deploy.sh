@@ -22,6 +22,8 @@ sleep 7
 
 echo "DEPLOYING REPO"
 
+# add host id to known hosts to avoid yes/no question from ssh
+echo $SERVER_SSH_ID >> ~/.ssh/known_hosts
 scp -r project $EC2_USERNAME@$EC2_PUBLIC_IP:~/
 ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_IP \
     cd project \
