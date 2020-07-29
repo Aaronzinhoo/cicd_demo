@@ -22,9 +22,9 @@ sleep 7
 
 echo "DEPLOYING REPO"
 
-scp -r $CIRCLE_PROJECT_REPONAME $EC2_USERNAME@$EC2_PUBLIC_IP:~/
+scp -r project $EC2_USERNAME@$EC2_PUBLIC_IP:~/
 ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_PUBLIC_IP \
-    cd $CIRCLE_PROJECT_REPONAME \
+    cd project \
     npm run build:prod \
     npm run start:prod \
     echo "DEPLOYED ${CIRCLE_PROJECT_REPONAME} SUCCESFULLY"

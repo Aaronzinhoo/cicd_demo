@@ -122,8 +122,8 @@ jobs:
           command: |
             cd ..
             ls .
-            chmod +x $CIRCLE_PROJECT_REPONAME/deploy.sh
-            ./$CIRCLE_PROJECT_REPONAME/deploy.sh
+            chmod +x project/deploy.sh
+            ./project/deploy.sh
 
 workflows:
   build-deploy-dev:
