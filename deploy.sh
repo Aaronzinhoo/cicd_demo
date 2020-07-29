@@ -19,7 +19,7 @@ sleep 7
 
 # steps to deploy
 # docker should already be installed, just need to copy repo code
-
+# npm should also be installed into the image as well
 echo "DEPLOYING REPO"
 
 # add host id to known hosts to avoid yes/no question from ssh

@@ -122,8 +122,6 @@ jobs:
           name: Deploy Updated Image to Server
           command: |
             cd ..
-            # sudo apt-get update -y
-            # sudo apt-get install groff -y
             chmod +x project/deploy.sh
             ./project/deploy.sh
 
