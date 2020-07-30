@@ -23,18 +23,18 @@ sleep 7
 echo "DEPLOYING REPO"
 
 # add host id to known hosts to avoid yes/no question from ssh
-c=0
 echo $SERVER_SSH_ID >> ~/.ssh/known_hosts
 scp -r project $EC2_USERNAME@$EC2_PUBLIC_IP:~/
-ssh $EC2_USERNAME@$EC2_PUBLIC_IP "
+ssh -t "${EC2_USERNAME}@${EC2_PUBLIC_IP}" 'bash -ic "
     cd project;
-    npm run build:prod;
-    npm run start:prod && echo DEPLOYED ${CIRCLE_PROJECT_REPONAME} SUCCESFULLY || (c=$?; echo DEPLOYMENT UNSUCCESSFUL);
-"
+    npm run build:prod; npm run start:prod && echo DEPLOYMENT SUCCESSFUL || (exit_code=$?; (exit $exit_code));
+"'
+exit_code=$?
 # remove ingress rule
 aws ec2 revoke-security-group-ingress --region $AWS_REGION --group-id $SECURITY_GROUP_ID \
         --protocol tcp --port 22 --cidr $RUNNER_IP/24
 
-if [ ! $c -eq 0 ]; then
-    exit $c
+if [ $exit_code -ne 0 ]; then
+    echo EXITING UNSUCCESSFULLY
+    exit $exit_code
 fi
